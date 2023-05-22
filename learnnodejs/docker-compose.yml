@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  vhalo-server:
+    depends_on:
+      - mongo
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file: ./.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    working_dir: /usr/src/app
+    ports:
+      - $PORT:$PORT
+    networks:
+      - project
+  
+  mongo:
+    image: mongo:5.0.9-focal
+    env_file: ./.env
+    ports:
+      - $MONGO_PORT:$MONGO_PORT
+    volumes:
+      - ./vhalo-db:/data/db
+    environment:
+      - MONGO_NAME=$MONGO_NAME
+    networks:
+      - project
+
+networks:
+  project:
+    driver: bridge
